@@ -1,0 +1,46 @@
+
+#nav {
+    /* min-width: 100px; */
+    /* width: auto; */
+    /* margin: auto; */
+    height: 100%;
+}
+
+#bongo_cat {
+    /* max-height: 100px; */
+    /* width: auto; */
+    /* margin: auto; */
+}
+#bongo_cat img {
+    max-height: 100px;
+    width: auto;
+    /* margin: auto; */
+}
+/* .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    background-color: var(--bs-secondary);
+    color: black;
+} */
+
+/* .flex-column button {
+    margin-top: 5px;
+    margin-bottom: 5px;
+} */
+
+
+/* por algum motivo o fundo escuro NÃO usa a cor escura de fundo por padrão */
+.bg-dark {
+    background-color: var(--bs-dark) !important;
+    color: white !important;
+}
+.bg-dark h1 {
+    color: white;
+}
+.bg-dark h2 {
+    color: white;
+}
+.bg-dark h3 {
+    color: white;
+}
+
+.center-pills { display: inline-block; }
+
