@@ -1,16 +1,8 @@
 
 #nav {
-    /* min-width: 100px; */
-    /* width: auto; */
-    /* margin: auto; */
     height: 100%;
 }
 
-#bongo_cat {
-    /* max-height: 100px; */
-    /* width: auto; */
-    /* margin: auto; */
-}
 #bongo_cat img {
     max-height: 100px;
     width: auto;
@@ -25,26 +17,20 @@ table th {
     border-color: white;
 }
 
-tbody th {
-    /* background-color: var(--bs-secondary) !important; */
-    /* border-color: white !important; */
+tr th:last-child {
+    border-right: 0px;
 }
-tbody tr {
-    /* background-color: var(--bs-secondary) !important; */
-    /* border-color: white !important; */
+
+thead tr th:first-child {
+    border-bottom: 1px;
+}
+
+tbody{
     text-align: center;
 }
-
-/* .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-    background-color: var(--bs-secondary);
-    color: black;
-} */
-
-/* .flex-column button {
-    margin-top: 5px;
-    margin-bottom: 5px;
-} */
-
+tbody th{
+    border-top: 1px solid white !important;
+}
 
 /* por algum motivo o fundo escuro NÃO usa a cor escura de fundo por padrão */
 .bg-dark {
