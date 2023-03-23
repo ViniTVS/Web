@@ -16,6 +16,25 @@
     width: auto;
     /* margin: auto; */
 }
+
+table th {
+    width: 16.6667%;
+    text-align: center;
+    background-color: var(--bs-primary) !important;
+    color: white;
+    border-color: white;
+}
+
+tbody th {
+    /* background-color: var(--bs-secondary) !important; */
+    /* border-color: white !important; */
+}
+tbody tr {
+    /* background-color: var(--bs-secondary) !important; */
+    /* border-color: white !important; */
+    text-align: center;
+}
+
 /* .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
     background-color: var(--bs-secondary);
     color: black;
