@@ -1,14 +1,16 @@
-
 #nav {
     height: 100%;
 }
 
 #bongo_cat img {
-    max-height: 100px;
-    width: auto;
+    width: 100%;
+    height: auto;
+    max-width: 200px;
     /* margin: auto; */
 }
 
+
+/* ------------------- tabela ------------------------ */
 table th {
     width: 16.6667%;
     text-align: center;
@@ -21,31 +23,51 @@ tr th:last-child {
     border-right: 0px;
 }
 
-thead tr th:first-child {
+tr th:first-child {
     border-bottom: 1px;
 }
 
-tbody{
+tbody {
     text-align: center;
 }
-tbody th{
+
+tbody th {
     border-top: 1px solid white !important;
 }
 
+#CI1010 {
+    background-color: var(--bs-secondary) !important;
+    color: white;
+}
+
+#CI1031 {
+    background-color: var(--bs-info) !important;
+    color: white;
+}
+
+#CI1221 {
+    background-color: var(--bs-warning) !important;
+    color: white;
+}
+/* ------------------------------ menu lateral ------------------------------------- */
 /* por algum motivo o fundo escuro NÃO usa a cor escura de fundo por padrão */
 .bg-dark {
     background-color: var(--bs-dark) !important;
     color: white !important;
 }
+
 .bg-dark h1 {
     color: white;
 }
+
 .bg-dark h2 {
     color: white;
 }
+
 .bg-dark h3 {
     color: white;
 }
 
-.center-pills { display: inline-block; }
-
+.center-pills {
+    display: inline-block;
+}

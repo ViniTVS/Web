@@ -18,14 +18,14 @@
 <body class="container-fluid">
     <main class="row" style="height: 100vh;">
         <!-- Menu lateral esquerdo -->
-        <aside class="d-none d-sm-block col-4 text-center bg-dark p-0 m-0">
+        <aside class="col-6 col-sm-4 col-lg-3 col-4 text-center bg-dark p-0 m-0">
             <div class="d-flex flex-column mx-4 justify-content-between py-2" id="nav">
                 <!-- Não consigo deixar o gif proporcional sem deixar dentro de uma div :( -->
                 <div id="bongo_cat"><img alt="Bongocat" src="bongo_cat.gif" /></div>
                 <nav class="nav nav-pills flex-column">
                     <a class="flex-sm-fill text-sm-center nav-link active" aria-current="page"
-                        href="https://www.inf.ufpr.br/vtvs18/index.html"> Principal </a>
-                    <a class="flex-sm-fill text-sm-center nav-link" href="https://www.inf.ufpr.br/vtvs18/redes2/">
+                        href="index.html"> Principal </a>
+                    <a class="flex-sm-fill text-sm-center nav-link" href="redes2.html">
                         Trabalho de redes 2 </a>
                     <a class="flex-sm-fill text-sm-center nav-link disabled"> Banco de Dados usando ActiveRecord</a>
                     <a class="flex-sm-fill text-sm-center nav-link disabled"> Processador de retas e polígonos</a>
@@ -41,7 +41,7 @@
             </div>
         </aside>
         <!-- Conteúdo principal (direita) -->
-        <section class="col" style="margin: auto;">
+        <section class="col" style="margin: auto;max-height: 100vh;overflow: scroll;">
             <h1 class="text-center">Vinícius Teixeira Vieira dos Santos</h1>
             <h4 class="text-center">GRR20186716</h4>
             <p>
@@ -50,8 +50,17 @@
                 Minha página própria pode ser encontrada por meio
                 <a href="https://site-vinitvs.vercel.app/" target="_blank" rel="noreferrer">deste link</a>.
             </p>
-            <h2>Meus horários:</h2>
-            <table class="table table-bordered border-primary" style="max-width: 600px;">
+            <h2>Turmas:</h2>
+            <ul>
+                <li><a class="link-secondary" href="https://www.inf.ufpr.br/bmuller/#/ci1010" target="_blank"
+                        rel="noreferrer">CI1010</a> - Programação Web</li>
+                <li><a class="link-info" href="https://www.inf.ufpr.br/andre/Disciplinas/CI1031-2023-1/" target="_blank"
+                        rel="noreferrer">CI1031</a> - Desafios de programação</li>
+                <li><a class="link-warning" href="https://moodle.c3sl.ufpr.br/course/view.php?id=606" target="_blank"
+                        rel="noreferrer">CI1221</a> - Engenhria de Software</li>
+                <li>CI1123 - Trabalho de Conclusão de Curso 1</li>
+            </ul>
+            <table class="table table-bordered border-primary" style="max-width: 600px; margin: auto;">
                 <thead>
                     <tr>
                         <th scope="col">Horário</th>
@@ -66,18 +75,18 @@
                     <tr>
                         <th scope="row">13:30</th>
                         <td></td>
-                        <td>C1010</td>
-                        <td>C1031</td>
-                        <td>C1010</td>
-                        <td>C1031</td>
+                        <td id="CI1010">CI1010</td>
+                        <td id="CI1031">CI1031</td>
+                        <td id="CI1010">CI1010</td>
+                        <td id="CI1031">CI1031</td>
                     </tr>
                     <tr>
                         <th scope="row">15:30</th>
                         <td></td>
                         <td></td>
-                        <td>CI1221</td>
+                        <td id="CI1221">CI1221</td>
                         <td></td>
-                        <td>CI1221</td>
+                        <td id="CI1221">CI1221</td>
                     </tr>
                     <tr>
                         <th scope="row">17:30</th>
@@ -88,7 +97,6 @@
                         <td></td>
                     </tr>
                 </tbody>
-
             </table>
         </section>
     </main>
