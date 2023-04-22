@@ -33,7 +33,7 @@ livros = [
   },
   {
     nome: "Uma Breve História do Tempo",
-    autores: "Stephen Hawking",
+    autores: ["Stephen Hawking"],
     editora: "Bantam Dell Publising Group",
     ano: 1988,
     nota: 92,
@@ -41,7 +41,7 @@ livros = [
   },
   {
     nome: "Algorithms Unlocked",
-    autores: "Thomas H. Cormen",
+    autores: ["Thomas H. Cormen"],
     editora: "MIT Press",
     ano: 2013,
     nota: 84,
@@ -49,7 +49,7 @@ livros = [
   },
   {
     nome: "Assassinato no Expresso do Oriente",
-    autores: "Agatha Christie",
+    autores: ["Agatha Christie"],
     editora: "Collins Crime Club",
     ano: 1934,
     nota: 86,
@@ -57,7 +57,7 @@ livros = [
   },
   {
     nome: "Duna",
-    autores: "Frank Herbert",
+    autores: ["Frank Herbert"],
     editora: "Editora Aleph",
     ano: 1965,
     nota: 90,
@@ -65,7 +65,7 @@ livros = [
   },
   {
     nome: "O Assassinato de Roger Ackroyd",
-    autores: "Agatha Christie",
+    autores: ["Agatha Christie"],
     editora: "William Collins & Sons",
     ano: 1969,
     nota: 80,
@@ -73,7 +73,7 @@ livros = [
   },
   {
     nome: "Filhos de Duna",
-    autores: "Frank Herbert",
+    autores: ["Frank Herbert"],
     editora: "Editora Aleph",
     ano: 1976,
     nota: 10,
@@ -95,19 +95,8 @@ livros.each do |livro|
   end
 
   # Adiciona autores
-  if livro[:autores].is_a? Array
-    livro[:autores].each do |nome_autor|
-      autor = Autor.find_by(nome: nome_autor)
-
-      if autor.blank?
-        autor = Autor.new({ :nome => nome_autor })
-        autor.save
-      end
-
-      l.autor << autor
-    end
-  else
-    nome_autor = livro[:autores]
+  # se for um array, adiciona um a um
+  livro[:autores].each do |nome_autor|
     autor = Autor.find_by(nome: nome_autor)
 
     if autor.blank?
@@ -117,6 +106,7 @@ livros.each do |livro|
 
     l.autor << autor
   end
+  
   r = Review.new({ :nota => livro[:nota], :texto => livro[:review] })
   r.livro = l
   l.editora = editora
