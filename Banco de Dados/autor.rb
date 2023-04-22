@@ -6,6 +6,7 @@ ActiveRecord::Base.establish_connection :adapter => "sqlite3",
 
 
 class Autor < ActiveRecord::Base;
-    has_many :livro, dependent: :delete_all 
+    self.table_name = "autores"
+    has_and_belongs_to_many :livro
 end
 
