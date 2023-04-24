@@ -20,16 +20,13 @@ def obtemTabela(nome_tabela)
   return $todas_tabelas[nome_tabela]
 end
 
-# insere, altera, exclui, lista
-
-def listaTabela(tabela, ordena = [])
+def listaTabela(tabela)
   return if tabela == nil
   entradas = tabela.all
   colunas = tabela.column_names
 
   entradas.each do |entrada|
     info = []
-
     colunas.each do |col|
       impressao = ""
       impressao << col
@@ -37,35 +34,21 @@ def listaTabela(tabela, ordena = [])
       impressao << entrada[col].to_s
       info.push(impressao)
     end
-    puts "#{info.join(", ")}"
+    puts "#{info.join(" | ")}"
   end
 end
 
 def insereTabela(tabela, valores_chaves)
   return if tabela == nil
 
-  h = Hash.new
-
-  val = valores_chaves
+  h = strToHash(valores_chaves)
   colunas = tabela.column_names
 
-  while val != nil
-    # vamos separar os valores para inserir entre campo e valor
-    val = val.split("\" ", 2)
-    separa = val[0].split("\=")
-
-    campo = separa[0]
-    if not colunas.include? campo
-      puts "Campo \"#{campo}\" não pertence à tabela"
+  h.each do |key, val|
+    if not colunas.include? key
+      puts "Campo \"#{key}\" não pertence à tabela"
       return
     end
-    valor = separa[1]
-    # tira as aspas e pula linha do valor
-    valor = valor.gsub("\"", "")
-    valor = valor.gsub("\n", "")
-
-    h[campo] = valor
-    val = val[1]
   end
 
   insere = tabela.new(h)
@@ -76,12 +59,8 @@ def insereTabela(tabela, valores_chaves)
   end
 end
 
-def excluiTabela(tabela, valores_chaves)
-  return if tabela == nil
-
+def strToHash(val)
   h = Hash.new
-
-  val = valores_chaves
 
   while val != nil
     # vamos separar os valores para inserir entre campo e valor
@@ -97,8 +76,19 @@ def excluiTabela(tabela, valores_chaves)
     h[campo] = valor
     val = val[1]
   end
+  return h
+end
 
-  tabela.find_by(h).destroy
+def excluiTabela(tabela, valores_chaves)
+  return if tabela == nil
+
+  h = strToHash(valores_chaves)
+  item = tabela.find_by(h)
+  if item == nil
+    puts "Item(s) para eclusão não encontrado(s)"
+  else
+    item.destroy
+  end
 end
 
 def printColunasTabela(tabela)
@@ -120,8 +110,7 @@ def trataComando(comando, restante)
   case comando
   when "lista"
     tabela = obtemTabela(restante[0])
-    restante.delete_at(0)
-    listaTabela(tabela, restante)
+    listaTabela(tabela)
   when "exclui"
     tabela = obtemTabela(restante[0])
     excluiTabela(tabela, restante[1])
@@ -144,6 +133,8 @@ def trataComando(comando, restante)
   else
     puts "Comando \"#{comando}\" não reconhecido"
   end
+
+  puts ""
 end
 
 loop do
