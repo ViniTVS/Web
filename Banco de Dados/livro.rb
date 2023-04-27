@@ -21,4 +21,23 @@ class Livro < ActiveRecord::Base
 
     end
   end
+  
+  # validações
+  validates :editora, presence: true
+  validates :nome, presence: true, length: { minimum: 2, maximum: 500 }
+  validates :ano, numericality: { only_integer: true, less_than_or_equal_to: 2023 }
+
+  validates_associated :editora
+
+
+  before_validation :corrige_tipos
+
+  private
+    def corrige_tipos
+      ano = ano.to_i
+      nome = nome.to_s
+      editora_id = editora_id.to_i
+    end
+
+
 end

@@ -12,6 +12,26 @@ $todas_tabelas = {
   "editoras" => Editora,
 }
 
+def strToHash(val)
+  h = Hash.new
+
+  while val != nil
+    # vamos separar os valores para inserir entre campo e valor
+    val = val.split("\" ", 2)
+    separa = val[0].split("\=")
+
+    campo = separa[0]
+    valor = separa[1]
+    # tira as aspas e pula linha do valor
+    valor = valor.gsub("\"", "")
+    valor = valor.gsub("\n", "")
+
+    h[campo] = valor
+    val = val[1]
+  end
+  return h
+end
+
 def obtemTabela(nome_tabela)
   if not $todas_tabelas.has_key?(nome_tabela)
     puts "Tabela #{nome_tabela} não encontrada"
@@ -20,9 +40,16 @@ def obtemTabela(nome_tabela)
   return $todas_tabelas[nome_tabela]
 end
 
-def listaTabela(tabela)
+def listaTabela(tabela, restante = "")
   return if tabela == nil
+  
   entradas = tabela.all
+
+  if restante != ""
+    h = strToHash(restante)
+    entradas = tabela.where(h)
+  end
+  
   colunas = tabela.column_names
 
   entradas.each do |entrada|
@@ -55,28 +82,9 @@ def insereTabela(tabela, valores_chaves)
   if insere.valid?
     insere.save
   else
-    puts "Campo(s) inválido(s)"
+    puts "Inserção inválida. Erro(s) gerado(s):"
+    puts insere.errors.full_messages
   end
-end
-
-def strToHash(val)
-  h = Hash.new
-
-  while val != nil
-    # vamos separar os valores para inserir entre campo e valor
-    val = val.split("\" ", 1)
-    separa = val[0].split("\=")
-
-    campo = separa[0]
-    valor = separa[1]
-    # tira as aspas e pula linha do valor
-    valor = valor.gsub("\"", "")
-    valor = valor.gsub("\n", "")
-
-    h[campo] = valor
-    val = val[1]
-  end
-  return h
 end
 
 def excluiTabela(tabela, valores_chaves)
@@ -110,7 +118,8 @@ def trataComando(comando, restante)
   case comando
   when "lista"
     tabela = obtemTabela(restante[0])
-    listaTabela(tabela)
+    # if restante[0] == "autores_livros"
+    listaTabela(tabela, restante[1])
   when "exclui"
     tabela = obtemTabela(restante[0])
     excluiTabela(tabela, restante[1])
