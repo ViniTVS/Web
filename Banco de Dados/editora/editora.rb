@@ -8,13 +8,12 @@ class Editora < ActiveRecord::Base
   has_many :livro, dependent: :delete_all
   # validações
   validates :nome, presence: true, length: { minimum: 2, maximum: 500 }
-  
+
   before_validation :corrige_tipos
 
   private
-    def corrige_tipos
-      nome = nome.to_s
-    end
 
-
+  def corrige_tipos
+    nome = nome.to_s
+  end
 end

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 $:.push "./"
-require "review.rb"
-require "livro.rb"
-require "editora.rb"
-require "autor.rb"
+require "review/review.rb"
+require "livro/livro.rb"
+require "editora/editora.rb"
+require "autor/autor.rb"
 
 livros = [
   {
@@ -77,7 +77,7 @@ livros = [
     editora: "Editora Aleph",
     ano: 1976,
     nota: 10,
-    review: "Muito bom, nota 10.",
+    review: "Achei esse livro muito bom, nota 10.",
   },
 ]
 
@@ -110,6 +110,6 @@ livros.each do |livro|
   r = Review.new({ :nota => livro[:nota], :texto => livro[:review] })
   r.livro = l
   l.editora = editora
-  r.save
   l.save
+  r.save
 end

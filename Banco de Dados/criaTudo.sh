@@ -1,18 +1,18 @@
 rm -f Tabelas.sqlite3
 echo -n "criando Livros... "
-ruby criaLivros.rb 
+ruby livro/criaLivros.rb 
 echo "Ok"
 echo -n "criando Editoras... "
-ruby criaEditoras.rb 
+ruby editora/criaEditoras.rb 
 echo "Ok"
 echo -n "criando Reviews... "
-ruby criaReviews.rb 
+ruby review/criaReviews.rb 
 echo "Ok"
 echo -n "criando Autores... "
-ruby criaAutores.rb 
+ruby autor/criaAutores.rb 
 echo "Ok"
 echo -n "criando AutoresLivros... "
-ruby criaAutoresLivros.rb 
+ruby autor/criaAutoresLivros.rb 
 echo "Ok"
 
 echo -n "Populando... "

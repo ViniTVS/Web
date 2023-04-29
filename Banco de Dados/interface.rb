@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 $:.push "./"
-require "review.rb"
-require "livro.rb"
-require "editora.rb"
-require "autor.rb"
+require "review/review.rb"
+require "livro/livro.rb"
+require "editora/editora.rb"
+require "autor/autor.rb"
 
 $todas_tabelas = {
   "autores" => Autor,
@@ -118,7 +118,6 @@ def trataComando(comando, restante)
   case comando
   when "lista"
     tabela = obtemTabela(restante[0])
-    # if restante[0] == "autores_livros"
     listaTabela(tabela, restante[1])
   when "exclui"
     tabela = obtemTabela(restante[0])
@@ -128,7 +127,7 @@ def trataComando(comando, restante)
   when "colunas"
     tabela = obtemTabela(restante[0])
     printColunasTabela(tabela)
-  when "limpar"
+  when "limpa"
     puts `clear`
   when "insere"
     tabela = obtemTabela(restante[0])
