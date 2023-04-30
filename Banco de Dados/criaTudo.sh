@@ -5,8 +5,8 @@ echo "Ok"
 echo -n "criando Editoras... "
 ruby editora/criaEditoras.rb 
 echo "Ok"
-echo -n "criando Reviews... "
-ruby review/criaReviews.rb 
+echo -n "criando Sinopses... "
+ruby sinopse/criaSinopses.rb 
 echo "Ok"
 echo -n "criando Autores... "
 ruby autor/criaAutores.rb 
