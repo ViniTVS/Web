@@ -7,7 +7,7 @@ ActiveRecord::Base.establish_connection :adapter => "sqlite3",
 class Editora < ActiveRecord::Base
   has_many :livro, dependent: :delete_all
   # validações
-  validates :nome, presence: true, length: { minimum: 2, maximum: 500 }
+  validates :nome, presence: true, length: { minimum: 2, maximum: 500 }, uniqueness: true
 
   before_validation :corrige_tipos
 

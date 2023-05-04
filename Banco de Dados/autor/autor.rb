@@ -21,14 +21,52 @@ class Autor < ActiveRecord::Base
   end
 
   # validações
-  validates :nome, presence: true, length: { minimum: 2, maximum: 500 }
+  validates :nome, presence: true, length: { minimum: 2, maximum: 500 }, uniqueness: true
 
   # antes da validação, corrige os tipos dos dados
   before_validation :corrige_tipos
+
 
   private
 
   def corrige_tipos
     nome = nome.to_s
+  end
+
+
+
+
+
+
+
+
+
+
+
+  def self.insere(hash)
+    campos_necessarios = ["nome", "livros"]
+    erros = Array.new
+    # verifica se o hash criado tem os campos necessários
+    campos_necessarios.each do |campo|
+      erros.push("Campo #{campo} não encontrado") if not hash.has_key?(campo)
+    end
+
+    return erros if not erros.empty?
+    # cria autor
+    autor = Autor.new(nome: hash['nome'])
+    # associa os livros ao autor
+    ids_livros = hash['livros'].split(",")
+    ids_livros.each do |id|
+      l = Livro.find_by(id: id.to_i)
+      autor.livro << l
+    end
+    # salva autor se for válido ou adiciona erros ao retorno
+    if autor.valid?
+      autor.save
+      puts "ID da nova inserção: #{autor.id}"
+    else
+      erros += autor.errors.full_messages
+    end
+    return erros
   end
 end

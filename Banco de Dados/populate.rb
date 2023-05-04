@@ -88,23 +88,10 @@ livros.each do |livro|
 
   l = Livro.new({ :nome => livro[:nome], :ano => livro[:ano] })
 
-  editora = Editora.find_by(nome: livro[:editora])
-  # editora não existe, então cria
-  if editora.blank?
-    editora = Editora.new({ :nome => livro[:editora] })
-    editora.save
-  end
-
+  editora = Editora.find_or_create_by(nome: livro[:editora])
   # Adiciona autores
-  # se for um array, adiciona um a um
   livro[:autores].each do |nome_autor|
-    autor = Autor.find_by(nome: nome_autor)
-
-    if autor.blank?
-      autor = Autor.new({ :nome => nome_autor })
-      autor.save
-    end
-
+    autor = Autor.find_or_create_by(nome: nome_autor)
     l.autor << autor
   end
   

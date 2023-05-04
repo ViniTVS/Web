@@ -5,7 +5,7 @@ ActiveRecord::Base.establish_connection :adapter => "sqlite3",
                                         :database => "Tabelas.sqlite3"
 
 class Livro < ActiveRecord::Base
-  has_one :review, dependent: :destroy
+  has_one :sinopse, dependent: :destroy
   belongs_to :editora
   has_and_belongs_to_many :autor, dependent: :destroy_all
 
@@ -25,6 +25,7 @@ class Livro < ActiveRecord::Base
   validates :editora, presence: true
   validates :nome, presence: true, length: { minimum: 2, maximum: 500 }
   validates :ano, presence: true, numericality: { only_integer: true, less_than_or_equal_to: 2023, greater_than_or_equal_to: -1000 }
+  validates :sinopse, presence: true
 
   validates_associated :editora
 
@@ -36,5 +37,34 @@ class Livro < ActiveRecord::Base
     ano = ano.to_i
     nome = nome.to_s
     editora_id = editora_id.to_i
+  end
+
+
+  
+  def self.insere(hash)
+    campos_necessarios = ["nome", "livros"]
+    erros = Array.new
+    # verifica se o hash criado tem os campos necessários
+    campos_necessarios.each do |campo|
+      erros.push("Campo #{campo} não encontrado") if not hash.has_key?(campo)
+    end
+
+    return erros if not erros.empty?
+    # cria autor
+    autor = Autor.new(nome: hash['nome'])
+    # associa os livros ao autor
+    ids_livros = hash['livros'].split(",")
+    ids_livros.each do |id|
+      l = Livro.find_by(id: id.to_i)
+      autor.livro << l
+    end
+    # salva autor se for válido ou adiciona erros ao retorno
+    if autor.valid?
+      autor.save
+      puts "ID da nova inserção: #{autor.id}"
+    else
+      erros += autor.errors.full_messages
+    end
+    return erros
   end
 end

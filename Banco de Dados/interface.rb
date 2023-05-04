@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 $:.push "./"
-require "review/review.rb"
+require "sinopse/sinopse.rb"
 require "livro/livro.rb"
 require "editora/editora.rb"
 require "autor/autor.rb"
@@ -8,11 +8,12 @@ require "autor/autor.rb"
 $todas_tabelas = {
   "autores" => Autor,
   "livros" => Livro,
-  "reviews" => Review,
+  "sinopses" => Sinopse,
   "editoras" => Editora,
 }
 
 def strToHash(val)
+  return nil if val == ""
   h = Hash.new
 
   while val != nil
@@ -42,14 +43,14 @@ end
 
 def listaTabela(tabela, restante = "")
   return if tabela == nil
-  
+
   entradas = tabela.all
 
   if restante != ""
     h = strToHash(restante)
     entradas = tabela.where(h)
   end
-  
+
   colunas = tabela.column_names
 
   entradas.each do |entrada|
@@ -70,21 +71,20 @@ def insereTabela(tabela, valores_chaves)
 
   h = strToHash(valores_chaves)
   colunas = tabela.column_names
-
-  h.each do |key, val|
-    if not colunas.include? key
-      puts "Campo \"#{key}\" não pertence à tabela"
-      return
-    end
+  if h == nil
+    puts "Campos não reconhecidos"
+    return
   end
 
-  insere = tabela.new(h)
-  if insere.valid?
-    insere.save
-  else
-    puts "Inserção inválida. Erro(s) gerado(s):"
-    puts insere.errors.full_messages
-  end
+  erros = tabela.insere(h)
+  puts erros
+  # if insere.valid?
+  #   insere.save
+  #   puts "ID da nova inserção: #{insere.id}"
+  # else
+  #   puts "Inserção inválida. Erro(s) gerado(s):"
+  #   puts insere.errors.full_messages
+  # end
 end
 
 def excluiTabela(tabela, valores_chaves)
@@ -124,11 +124,11 @@ def trataComando(comando, restante)
     excluiTabela(tabela, restante[1])
   when "tabelas"
     getTabelas()
-  when "colunas"
+  when "colunas", "campos"
     tabela = obtemTabela(restante[0])
     printColunasTabela(tabela)
-  when "limpa"
-    puts `clear`
+  when "limpa", "limpar"
+    print `clear`
   when "insere"
     tabela = obtemTabela(restante[0])
     insereTabela(tabela, restante[1])
