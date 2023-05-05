@@ -11,7 +11,7 @@ $todas_tabelas = {
   "sinopses" => Sinopse,
   "editoras" => Editora,
 }
-
+# transforma o padrão de entrada em um hash
 def strToHash(val)
   return nil if val == ""
   h = Hash.new
@@ -51,6 +51,11 @@ def listaTabela(tabela, restante = "")
     entradas = tabela.where(h)
   end
 
+  if entradas.empty?
+    puts "Entrada(s) não encontrada(s)"
+    return
+  end
+
   colunas = tabela.column_names
 
   entradas.each do |entrada|
@@ -66,25 +71,46 @@ def listaTabela(tabela, restante = "")
   end
 end
 
-def insereTabela(tabela, valores_chaves)
-  return if tabela == nil
+def insereLivros(hash)
+  sinopse = Sinopse.new(texto: hash["sinopse"])
+  hash.delete("sinopse")
 
-  h = strToHash(valores_chaves)
-  colunas = tabela.column_names
-  if h == nil
-    puts "Campos não reconhecidos"
-    return
+  livro = Livro.new(hash)
+  livro.sinopse = sinopse
+
+  if sinopse.valid? and livro.valid?
+    sinopse.save
+    livro.save
+    puts "ID da nova inserção: #{livro.id}"
+  else
+    puts "Inserção inválida. Erro(s) gerado(s):"
+    puts livro.errors.full_messages
+    puts sinopse.errors.full_messages
   end
+end
 
-  erros = tabela.insere(h)
-  puts erros
-  # if insere.valid?
-  #   insere.save
-  #   puts "ID da nova inserção: #{insere.id}"
-  # else
-  #   puts "Inserção inválida. Erro(s) gerado(s):"
-  #   puts insere.errors.full_messages
-  # end
+def insereAutoresLivros(hash)
+  ids_autores = hash["autores"].split(",")
+  ids_livros = hash["livros"].split(",")
+
+  ids_livros.each do |id_livro|
+    ids_autores.each do |id_autor|
+      livro = Livro.find_by(id: id_livro.to_i)
+      autor = Autor.find_by(id: id_autor.to_i)
+      autor.livro << livro if livro != nil and autor != nil
+    end
+  end
+end
+
+def insereTabela(tabela, hash)
+  insere = tabela.new(hash)
+  if insere.valid?
+    insere.save
+    puts "ID da nova inserção: #{insere.id}"
+  else
+    puts "Inserção inválida. Erro(s) gerado(s):"
+    puts insere.errors.full_messages
+  end
 end
 
 def excluiTabela(tabela, valores_chaves)
@@ -117,8 +143,8 @@ end
 def trataComando(comando, restante)
   case comando
   when "lista"
-    tabela = obtemTabela(restante[0])
-    listaTabela(tabela, restante[1])
+    if restante[0] == "autores_livros"
+    listaTabela(obtemTabela(restante[0]), restante[1])
   when "exclui"
     tabela = obtemTabela(restante[0])
     excluiTabela(tabela, restante[1])
@@ -130,8 +156,17 @@ def trataComando(comando, restante)
   when "limpa", "limpar"
     print `clear`
   when "insere"
-    tabela = obtemTabela(restante[0])
-    insereTabela(tabela, restante[1])
+    h = strToHash(restante[1])
+
+    case restante[0]
+    when "livros"
+      insereLivros(h)
+    when "autores_livros"
+      insereAutoresLivros(h)
+      # when "autores"
+    else
+      insereTabela(obtemTabela(restante[0]), h)
+    end
   when "associa"
     tabela = obtemTabela(restante[0])
     associaTabelas(tabela, restante[1])
