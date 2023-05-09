@@ -44,7 +44,7 @@ end
 # Verifica se o resultado na busca do active_record é vazio
 def resultadoVazio(res_busca)
   vazio = false
-  # Se a hash de busca tiver erros, o método blank? 
+  # Se a hash de busca tiver erros, o método blank?
   # encerra o programa e joga erros na sua cara
   begin
     vazio = res_busca.blank?
@@ -64,10 +64,7 @@ def obtemTabela(nome_tabela)
   return $todas_tabelas[nome_tabela]
 end
 
-# Imprime na saida padrão os dados da tabela de nome nome_tabela.
-# Opcionalmente pode ser passada uma String que se tornará hash
-# com a função strToHash com condições para buscar entradas que as atendam
-def listaTabela(nome_tabela, condicoes = "")
+def buscaTabela(nome_tabela, condicoes = "")
   tabela = obtemTabela(nome_tabela)
   return if tabela == nil
 
@@ -81,10 +78,22 @@ def listaTabela(nome_tabela, condicoes = "")
   # não tem o que listar
   if resultadoVazio(entradas)
     puts "Entrada(s) não encontrada(s)"
-    return
+    return nil
   end
+  return entradas
+end
 
+# Imprime na saida padrão os dados da tabela de nome nome_tabela.
+# Opcionalmente pode ser passada uma String que se tornará hash
+# com a função strToHash com condições para buscar entradas que as atendam
+def listaTabela(nome_tabela, condicoes = "")
+  tabela = obtemTabela(nome_tabela)
+  return if tabela == nil
+
+  entradas = buscaTabela(nome_tabela, condicoes)
+  return if entradas == nil
   colunas = entradas.column_names
+
   entradas.each do |entrada|
     info = []
     colunas.each do |col|
@@ -116,8 +125,29 @@ def listaTabela(nome_tabela, condicoes = "")
 end
 
 # Adiciona entrada na (classe da) tabela passada com a nova entrada desejada (formato em hash)
-def insereTabela(tabela, entrada)
+def insereTabela(nome_tabela, entrada)
+  tabela = obtemTabela(nome_tabela)
+  return if tabela == nil
+
+  ids_livros = []
+
+  if nome_tabela == "autores"
+    ids_livros = entrada["livros"]
+    entrada.delete("livros")
+    ids_livros = ids_livros.split(",")
+  end
+
   insere = tabela.new(entrada)
+
+  ids_livros.each do |id_l|
+    l = Livro.find_by(id: id_l)
+    if l == nil
+      puts "Livro(s) não encontrado(s)"
+      return
+    end
+    insere.livro << l 
+  end
+
   if insere.valid?
     insere.save
     puts "ID da nova inserção: #{insere.id}"
@@ -128,7 +158,7 @@ def insereTabela(tabela, entrada)
 end
 
 # Faz o mesmo de insereTabela, mas como um livro precisa ter necessariamente
-# uma sinopse, foi feita uma função própria para tal
+# uma sinopse e autores, foi feita uma função própria para tal
 def insereLivros(entrada)
   sinopse = Sinopse.new(texto: entrada["sinopse"])
   entrada.delete("sinopse")
@@ -199,11 +229,28 @@ def getTabelas()
   end
 end
 
+def alteraTabela(nome_tabela, dados)
+  dados = "" if dados == nil
+  campos = dados.split(" para ")
+  if campos.length != 2
+    puts "Condição de alteração não encontrada"
+    return
+  end
+  entradas = buscaTabela(nome_tabela, campos[0])
+  hash = strToHash(campos[1])
+
+  return if entradas == nil or hash == nil
+
+  entradas.each do |e|
+    e.update(hash)
+  end
+end
+
 def trataComando(comando, restante)
   case comando
   when "lista"
     listaTabela(restante[0], restante[1])
-  when "exclui"
+  when "exclui", "remove"
     tabela = obtemTabela(restante[0])
     h = strToHash(restante[1])
     excluiTabela(tabela, h)
@@ -220,14 +267,14 @@ def trataComando(comando, restante)
     case restante[0]
     when "livros"
       insereLivros(h)
-    when "autores_livros"
-      insereAutoresLivros(h)
     else
-      insereTabela(obtemTabela(restante[0]), h)
+      insereTabela(restante[0], h)
     end
   when "associa"
     tabela = obtemTabela(restante[0])
     associaTabelas(tabela, restante[1])
+  when "altera"
+    alteraTabela(restante[0], restante[1])
   when "sair"
     puts "Saindo..."
     exit 0
@@ -235,7 +282,6 @@ def trataComando(comando, restante)
     puts "Comando \"#{comando}\" não reconhecido"
   end
 
-  puts ""
 end
 
 loop do
