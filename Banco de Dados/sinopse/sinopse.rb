@@ -5,7 +5,7 @@ ActiveRecord::Base.establish_connection :adapter => "sqlite3",
                                         :database => "Tabelas.sqlite3"
 
 class Sinopse < ActiveRecord::Base
-  belongs_to :livro
+  belongs_to :livro, dependent: :destroy
   # validações
   validates :livro, presence: true, uniqueness: true
   validates :texto, presence: true, length: { minimum: 20, maximum: 2000 }

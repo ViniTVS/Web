@@ -130,6 +130,11 @@ def insereTabela(nome_tabela, entrada)
   return if tabela == nil
 
   ids_livros = []
+  # você é um autor se não escreveu um livro?
+  if not entrada.key?("livros") and nome_tabela == "autores"
+    puts "Livros não encontrados"
+    return
+  end
 
   if nome_tabela == "autores"
     ids_livros = entrada["livros"]
@@ -145,7 +150,7 @@ def insereTabela(nome_tabela, entrada)
       puts "Livro(s) não encontrado(s)"
       return
     end
-    insere.livro << l 
+    insere.livro << l
   end
 
   if insere.valid?
@@ -177,20 +182,6 @@ def insereLivros(entrada)
   end
 end
 
-# Faz o mesmo de insereTabela, mas como não podemos acessar diretamente a tabela
-# de associação entre autores e livros, foi feita uma função própria para tal
-def insereAutoresLivros(hash)
-  ids_autores = hash["autores"].split(",")
-  ids_livros = hash["livros"].split(",")
-
-  ids_livros.each do |id_livro|
-    livro = Livro.find_by(id: id_livro.to_i)
-    ids_autores.each do |id_autor|
-      autor = Autor.find_by(id: id_autor.to_i)
-      autor.livro << livro if livro != nil and autor != nil
-    end
-  end
-end
 
 # Exclui entradas da tabela que atendam à condição da hash passada em
 # valores_chaves
@@ -206,9 +197,7 @@ def excluiTabela(tabela, valores_chaves)
   if resultadoVazio(itens)
     puts "Item(s) para eclusão não encontrado(s)"
   else
-    itens.each do |item|
-      item.destroy
-    end
+    itens.destroy_all
   end
 end
 
@@ -223,13 +212,13 @@ end
 # Imprime as tabelas existentes no banco
 def getTabelas()
   tabelas = ActiveRecord::Base.connection.tables
-
   tabelas.each do |tabela|
     puts tabela
   end
 end
 
 def alteraTabela(nome_tabela, dados)
+  # verifica se tabela existe e se comando foi executado certo
   dados = "" if dados == nil
   campos = dados.split(" para ")
   if campos.length != 2
@@ -238,29 +227,54 @@ def alteraTabela(nome_tabela, dados)
   end
   entradas = buscaTabela(nome_tabela, campos[0])
   hash = strToHash(campos[1])
-
   return if entradas == nil or hash == nil
+  # verifica se precisa atualizar livros
+  upd_livros = hash.key?("livros") ? true : false
+
+  ids_livros = []
+  if nome_tabela == "autores" and upd_livros
+    ids_livros = hash["livros"]
+    hash.delete("livros")
+    ids_livros = ids_livros.split(",")
+  end
 
   entradas.each do |e|
+    # atualiza os livros?
+    e.livro.clear if upd_livros
+    ids_livros.each do |id_l|
+      l = Livro.find_by(id: id_l)
+      if l == nil
+        puts "Livro(s) não encontrado(s)"
+        return
+      end
+      e.livro << l
+    end
+
     e.update(hash)
   end
+  puts "Alteração feita"
 end
 
 def trataComando(comando, restante)
   case comando
   when "lista"
     listaTabela(restante[0], restante[1])
+
   when "exclui", "remove"
     tabela = obtemTabela(restante[0])
     h = strToHash(restante[1])
     excluiTabela(tabela, h)
+
   when "tabelas"
     getTabelas()
+
   when "colunas", "campos"
     tabela = obtemTabela(restante[0])
     printColunasTabela(tabela)
+
   when "limpa", "limpar"
     print `clear`
+
   when "insere"
     h = strToHash(restante[1])
 
@@ -270,14 +284,18 @@ def trataComando(comando, restante)
     else
       insereTabela(restante[0], h)
     end
+
   when "associa"
     tabela = obtemTabela(restante[0])
     associaTabelas(tabela, restante[1])
-  when "altera"
+
+  when "altera", "atualiza"
     alteraTabela(restante[0], restante[1])
+
   when "sair"
     puts "Saindo..."
     exit 0
+
   else
     puts "Comando \"#{comando}\" não reconhecido"
   end
