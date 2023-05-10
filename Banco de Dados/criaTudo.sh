@@ -19,19 +19,3 @@ echo -n "Populando... "
 ruby populate.rb  
 echo "Ok"
 
-
-# echo -n "populaEstados ..."
-# ruby populaEstados.rb
-# echo "Ok"
-# echo -n "populaPessoas ..."
-# ruby populaPessoasD.rb
-# echo "Ok"
-# echo -n "populaMunicipios ..."
-# ruby populaMunicipos.rb
-# echo "Ok"
-# echo -n "populaEsportes ..."
-# ruby populaEsportes.rb
-# echo "Ok"
-# echo -n "populaPessoasEsportes ..."
-# ruby populaPessoaEsporte.rb
-# echo "Ok"

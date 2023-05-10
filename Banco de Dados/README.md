@@ -8,10 +8,13 @@ Caracteristicas:
  - Especificação: < operação > < tabela > { atributo = valor }
 
 ## Trabalho feito
-Para realizar o trabalho, foi criada a ideia de atender às relações entre tabelas da seguinte forma:
-Uma tabela de livros, que possui uma relação 1:1 com a
+Para realizar o trabalho foi escolhido criar um banco de dados (utilizando SQLite) com relação a livros e relações com seus autores, editora e sinopse. As realções foram atendidas da seguinte forma:
+ - um para um: todo livro possui uma única sinopse.
+ - um para muitos: cada editora possui vários livros.
+ - muitos para muitos: um livro pode ter vários autores e cada autor pode ter escrito vários livros.
 
 # Tabelas
+Cada tabela foi criada no Active Record com os seguintes campos:
 ## Livro
 | Campo | Tipo | Restrições |
 | ----------- | ----------- | ----------- |
@@ -41,7 +44,13 @@ Uma tabela de livros, que possui uma relação 1:1 com a
 | livro | belongs_to Livro | obrigatório, único |
 
 # Execução
+Antes de executar o programa para interface deve-se executar o script `criaTudo.sh`, que executa os programas que criam as relações do banco de dados e os popula (executando o populate.rb). Ao final de sua execução deve ser criado o arquivo `Tabelas.sqlite3`, em que armazena os dados do banco de dados em si.
 
+Para leitura dos comandos do usuário foi criado o programa `interface.rb`, que pode ser executado com 
+```bash
+ruby interface.rb
+```
+Os comandos criados são listados a seguir: 
 # Comandos
 ## lista
 
