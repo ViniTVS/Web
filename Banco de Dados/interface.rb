@@ -165,6 +165,10 @@ end
 # Faz o mesmo de insereTabela, mas como um livro precisa ter necessariamente
 # uma sinopse e autores, foi feita uma função própria para tal
 def insereLivros(entrada)
+  if not entrada.has_key?("sinopse")
+    puts  "É necessário uma sinopse para o livro"
+    return
+  end
   sinopse = Sinopse.new(texto: entrada["sinopse"])
   entrada.delete("sinopse")
 
@@ -203,9 +207,11 @@ end
 
 # Impre as colunas de dada tabela
 def printColunasTabela(tabela)
-  colunas = tabela.options.includes(:model_options)
+  return if tabela == nil
+  puts "Colunas:"
+  colunas = tabela.column_names
   colunas.each do |col|
-    puts col
+    puts "\t#{col}"
   end
 end
 
@@ -284,10 +290,6 @@ def trataComando(comando, restante)
     else
       insereTabela(restante[0], h)
     end
-
-  when "associa"
-    tabela = obtemTabela(restante[0])
-    associaTabelas(tabela, restante[1])
 
   when "altera", "atualiza"
     alteraTabela(restante[0], restante[1])
