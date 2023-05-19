@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="pt_BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap import -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <!-- Tema Minty do Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.2.3/dist/minty/bootstrap.min.css" rel="stylesheet">
+    <!-- load Markdown -->
+    <script type="module" src="https://cdn.jsdelivr.net/gh/zerodevx/zero-md@2/dist/zero-md.min.js"></script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css">
+
+    <title>Página de Vinícius Teixeira V. dos Santos</title>
+</head>
+
+<body class="container-fluid">
+    <main class="row" style="height: 100vh;">
+        <!-- Menu lateral esquerdo -->
+        <aside class="col-6 col-sm-4 col-lg-3 col-4 text-center bg-dark p-0 m-0">
+            <div class="d-flex flex-column mx-4 justify-content-between py-2" id="nav">
+                <!-- Não consigo deixar o gif proporcional sem deixar dentro de uma div :( -->
+                <div id="bongo_cat"><img alt="Bongocat" src="bongo_cat.gif" /></div>
+                <nav class="nav nav-pills flex-column">
+                    <a class="flex-sm-fill text-sm-center nav-link" aria-current="page" href="index.html"> Principal
+                    </a>
+                    <a class="flex-sm-fill text-sm-center nav-link" href="redes2.html">
+                        Trabalho de redes 2 </a>
+                    <a class="flex-sm-fill text-sm-center nav-link active" href="banco_de_dados/index.html"> Banco de
+                        Dados usando ActiveRecord</a>
+                    <a class="flex-sm-fill text-sm-center nav-link disabled"> Processador de retas e polígonos</a>
+                    <a class="flex-sm-fill text-sm-center nav-link disabled"> Visualizeitor </a>
+                    <a class="flex-sm-fill text-sm-center nav-link disabled"> Aplicação Rails </a>
+                    <a class="flex-sm-fill text-sm-center nav-link" aria-current="page" href="contato.html"> Contato
+                    </a>
+                </nav>
+
+                <footer style="font-size: 0.8rem;">
+                    Projetado e desenvolvido por Vinícius Teixeira Vieira dos Santos
+                </footer>
+            </div>
+        </aside>
+        <!-- Conteúdo principal (direita) -->
+        <section class="col" style="margin: auto;max-height: 100vh; overflow: auto;">
+            <h1 id="trabalho-de-banco-de-dados-usando-activerecord">Trabalho de Banco de Dados usando ActiveRecord</h1>
+            <h2 id="enunciado-do-trabalho">Enunciado do trabalho</h2>
+            <p>Objetivo: Criar e usar um banco de dados via ActiveRecord. <br>Caracteristicas:</p>
+            <ul>
+                <li>Criar um banco de dados contendo tabelas com as relações (a) um para um, (b) um para muitos e (c)
+                    muitos para muitos.</li>
+                <li>A inserção, alteração e exclusão de elementos devem ser realizados de acordo com o que for indicado
+                    pelo usuário na linha de comando. Comandos: insere, altera, exclui.</li>
+                <li>Especificação: &lt; operação &gt; &lt; tabela &gt; { atributo = valor }</li>
+            </ul>
+            <h2 id="trabalho-feito">Trabalho feito</h2>
+            <p>Para realizar o trabalho foi escolhido criar um banco de dados (utilizando SQLite) com relação a livros e
+                relações com seus autores, editora e sinopse. As realções foram atendidas da seguinte forma:</p>
+            <ul>
+                <li>um para um: todo livro possui uma única sinopse.</li>
+                <li>um para muitos: cada editora possui vários livros.</li>
+                <li>muitos para muitos: um livro pode ter vários autores e cada autor pode ter escrito vários livros.
+                </li>
+            </ul>
+            <a href="banco_de_dados.zip">
+                <button type="button" class="btn btn-primary" style="margin-bottom: 10px;">Baixar arquivos</button>
+            </a>
+            <h1 id="tabelas">Tabelas</h1>
+            <p>Cada tabela foi criada no Active Record com os seguintes campos:</p>
+            <h2 id="livro">Livro</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Campo</th>
+                        <th>Tipo</th>
+                        <th>Restrições</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>ano</td>
+                        <td>Integer</td>
+                        <td>obrigatório, valor entre -1000 e 2023</td>
+                    </tr>
+                    <tr>
+                        <td>nome</td>
+                        <td>String</td>
+                        <td>obrigatório, tamanho entre 2 e 500 caracteres</td>
+                    </tr>
+                    <tr>
+                        <td>editora</td>
+                        <td>has_one Editora</td>
+                        <td>obrigatório</td>
+                    </tr>
+                    <tr>
+                        <td>sinopse</td>
+                        <td>has_one Sinopse</td>
+                        <td>obrigatório</td>
+                    </tr>
+                    <tr>
+                        <td>autor</td>
+                        <td>has_and_belongs_to_many Autor</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>Caso um livro seja excluído, todos os autores que não tenham relação com outro livro deve ser excluído,
+                assim como a sinopse relacionada ao livro.</p>
+            <h2 id="editora">Editora</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Campo</th>
+                        <th>Tipo</th>
+                        <th>Restrições</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>nome</td>
+                        <td>String</td>
+                        <td>obrigatório, tamanho entre 2 e 500, único</td>
+                    </tr>
+                    <tr>
+                        <td>livro</td>
+                        <td>has_many Livro</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>Caso seja excluída uma editora, todos os livros relacionados a ela devem também ser excluídos.</p>
+            <h2 id="autor">Autor</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Campo</th>
+                        <th>Tipo</th>
+                        <th>Restrições</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>nome</td>
+                        <td>String</td>
+                        <td>obrigatório, tamanho entre 2 e 500 caracteres, único</td>
+                    </tr>
+                    <tr>
+                        <td>livro</td>
+                        <td>has_and_belongs_to_many Livro</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>Caso seja excluído um autor, todos os livros que o possuam como único autor devem ser excluídos.</p>
+            <h2 id="sinopse">Sinopse</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Campo</th>
+                        <th>Tipo</th>
+                        <th>Restrições</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>texto</td>
+                        <td>Text</td>
+                        <td>obrigatório, tamanho entre 20 e 2000 caracteres, único</td>
+                    </tr>
+                    <tr>
+                        <td>livro</td>
+                        <td>belongs_to Livro</td>
+                        <td>obrigatório, único</td>
+                    </tr>
+                </tbody>
+            </table>
+            <h1 id="execu-o">Execução</h1>
+            <p>Antes de executar o programa para interface deve-se executar o script <code>criaTudo.sh</code>, que
+                executa os programas que criam as relações do banco de dados e os popula (executando o populate.rb). Ao
+                final de sua execução deve ser criado o arquivo <code>Tabelas.sqlite3</code>, em que armazena os dados
+                do banco de dados em si. <br>Para leitura dos comandos do usuário foi criado o programa
+                <code>interface.rb</code>, que pode ser
+                executado com</p>
+            <pre><code class="lang-bash">ruby <span class="hljs-class">interface.rb</span></code></pre>
+            <p>Os comandos criados são listados a seguir:</p>
+            <h1 id="comandos">Comandos</h1>
+            <p>Cada comando deve ser executado respeitando o seguinte padrão:</p>
+            <p>&#60;comando&#62; &#60;tabela&#62; campo=&quot;valor&quot;</p>
+            <p>Obs: cada camo que possui relação um para um ou um para vários possui como campo o nome da outra tabela
+                seguido por _id. É possível ver os campos que podem ser utilizados utilizando o comando colunas</p>
+            <p>Ex:</p>
+            <pre><code>lista livros editor<span class="hljs-built_in">a_id</span>=<span class="hljs-string">"3"</span></code></pre>
+            <h2 id="tabelas">tabelas</h2>
+            <p>É o único comando que não utiliza nem tabela e em campos. Ele lista todas as tabelas presentes no arquivo
+                gerado para o SQLite.</p>
+            <p>Ex:</p>
+            <pre><code><span class="hljs-attribute">tabelas</span></code></pre>
+            <p>Obs: apesar de imprimir a tabela autores_livros (que exite para a relação muitos para muitos), esta não
+                poderá ser acessada diretamente.</p>
+            <h2 id="colunas">colunas</h2>
+            <p>alias: <code>campos</code></p>
+            <p>Lista todas as colunas presentes em uma tabela. Este comando não utiliza os valores de campos.</p>
+            <p>Ex:</p>
+            <pre><code><span class="hljs-attribute">colunas livros</span></code></pre>
+            <h2 id="lista">lista</h2>
+            <p>Lista as entradas da tabela passada como parâmetro. Opcionalmente podem ser passados os campos que a
+                entrada deve ter para ser listada. Caso sejam passados vários campos, são listadas as entradas que
+                respeitem todas as condições.</p>
+            <p>Ex (sem campos):</p>
+            <pre><code><span class="hljs-attribute">lista livros</span></code></pre>
+            <p>Ex (com campos):</p>
+            <pre><code>lista livros ano=<span class="hljs-string">"1996"</span> editor<span class="hljs-built_in">a_id</span>=<span class="hljs-string">"2"</span></code></pre>
+            <h2 id="insere">insere</h2>
+            <p>Insere em dada tabela uma nova entrada especificada pelos campos passados. Porém, por conta das
+                associações das tabelas, existem algumas limitações:</p>
+            <p>Como livros e sinopses possuem uma relação um para um, ambos devem ser inseridos juntos, então também se
+                deve adicionar um campo sinopse durante a inserção de um livro.
+                Ex:</p>
+            <pre><code>insere livros nome=<span class="hljs-string">"Eu"</span> ano=<span class="hljs-string">"1912"</span> editor<span class="hljs-built_in">a_id</span>=<span class="hljs-string">"3"</span> sinopse=<span class="hljs-string">"Eu e outras poesias, conhecido também apenas como Eu, é o único livro de poesia de Augusto dos Anjos..."</span></code></pre>
+            <p>Como não é possível acessar diretamente a tabela autores_livros, esta associação é feita ao se inserir ou
+                alterar um autor. Ou seja, é necessário <strong>primeiro ser inserido um livro para então se inserir seu
+                    autor</strong>. Para isso, ao se inserir um autor, é necessário especificar seus livros, que devem
+                ser declarados com um campo livros e passados os IDs dos livros separados por vírgula.
+                Ex:</p>
+            <pre><code><span class="hljs-attribute">insere autores nome</span>=<span class="hljs-string">"Augusto dos Anjos"</span> livros=<span class="hljs-string">"1,10"</span></code></pre>
+            <p>Faz com que seja inserido o autor de nome Augusto dos Anjos e associado aos livros de IDs 1 e 10.</p>
+            <p>Então no caso de inserir uma editora, basta colocar seu nome:
+                Ex:</p>
+            <pre><code><span class="hljs-attribute">insere editoras nome</span>=<span class="hljs-string">"Editora UFPR"</span></code></pre>
+            <p>Caso seja válida a nova entrada, é retornado o seu ID de inserção. Caso contrário serão apresentados
+                erros.</p>
+            <h2 id="exclui">exclui</h2>
+            <p>alias: <code>remove</code></p>
+            <p>Remove as entradas da tabela que possuam o valor dos campos passados. Caso sejam passados vários campos,
+                são excluídas as entradas que respeitem todas as condições.</p>
+            <p>Ex:</p>
+            <pre><code><span class="hljs-attribute">exclui livros ano</span>=<span class="hljs-string">"1969"</span></code></pre>
+            <h2 id="altera">altera</h2>
+            <p>alias: <code>atualiza</code></p>
+            <p>Atualiza os campos passados para serem atualizados de dada tabela. Serão atualizados todos os registros
+                da tabela que atendam às condições dos campos passados. Para separar os valores de campo de busca e os
+                novos valores, deve-se utilizar a palavra &quot;para&quot; e então o(s) novo(s) valor(es) dos campos
+                devem ser passada.</p>
+            <p>Com isso, o padrão do comando é de:</p>
+            <p>&#60;comando&#62; &#60;tabela&#62; campo_busca=&quot;valor&quot; <strong>para</strong> campo=&quot;novo valor&quot;
+            </p>
+            <p>Obs: é importante ressaltar que os valores dos campos de busca que precisam ser atendidos não precisam
+                ser necessariamente aqueles a se atualizar.</p>
+            <p>Ex:</p>
+            <pre><code><span class="hljs-attribute">altera livros ano</span>=<span class="hljs-string">"1968"</span> para nome=<span class="hljs-string">"Livros de 1968 alterados"</span></code></pre>
+            <h2 id="limpa">limpa</h2>
+            <p>alias: <code>limpar</code></p>
+            <p>Este é na verdade um comando auxiliar, usado para que possa limpar a tela do terminal. Ele só executa o
+                comando ruby:</p>
+            <pre><code class="lang-ruby">puts `clear`</code></pre>
+            <p>Ex:</p>
+            <pre><code><span class="hljs-attribute">limpar</span></code></pre>
+            <h2 id="sair">sair</h2>
+            <p>Encerra a execução do programa.
+                Ex:</p>
+            <pre><code><span class="hljs-attribute">sair</span></code></pre>
+        </section>
+    </main>
+
+
+</body>
+
+</html>
