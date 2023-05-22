@@ -15,7 +15,7 @@
     <title>Processador de retas e polígonos</title>
 
 
-    <script type="text/javascript" src="actions.js"></script>
+    <script type="text/javascript" src="Canvas.js"></script>
     <script type="text/javascript" src="Linha.js"></script>
 </head>
 
@@ -49,36 +49,36 @@
         </aside>
         <!-- Conteúdo principal (direita) -->
         <section class="col" style="margin: auto; height: 100vh; overflow-y: auto;">
-            <div style="min-height: 100vh;">
-                <h1 style="text-align: center;"> Processador de retas e polígonos </h1>
-                <div id="canvasDiv">
-                    <canvas id="canvas" width="500" height="500"></canvas> <!-- Conteúdo das retas -->
-                </div>
-                <!-- Form para as ações -->
-                <form style="margin-top: 10px;">
-                    <div class="row row-cols-sm-auto g-3 align-items-center justify-content-center">
-                        <span style="padding: 0;">
-                            <button type="button" id="botaoCriar" class="btn btn-primary">Criar polígono</button>
-                            de&nbsp;
-                        </span>
-                        <div class="col" style="padding: 0;">
-                            <select class="form-select" id="sidesInput">
-                                <option value="3" selected>3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                                <option value="6">6</option>
-                                <option value="7">7</option>
-                                <option value="8">8</option>
-                            </select>
-                        </div>
-                        <span style="padding: 0;">&nbsp;lados</span>
-                    </div>
-                    <div class="row row-cols-sm-auto g-3 align-items-center justify-content-center"
-                        style="margin-top: 0px;">
-                        <button type="button" class="btn btn-danger" id="cleanButton">Apagar linhas</button>
-                    </div>
-                </form>
+            <!-- <div style="min-height: 100vh;"> -->
+            <h1 style="text-align: center;"> Processador de retas e polígonos </h1>
+            <div id="canvasDiv">
+                <canvas id="canvas" width="500" height="500"></canvas> <!-- Conteúdo das retas -->
             </div>
+            <!-- Form para as ações -->
+            <form style="margin-top: 10px;">
+                <div class="row row-cols-sm-auto g-3 align-items-center justify-content-center">
+                    <span style="padding: 0;">
+                        <button type="button" id="botaoCriar" class="btn btn-primary">Criar polígono</button>
+                        de&nbsp;
+                    </span>
+                    <div class="col" style="padding: 0;">
+                        <select class="form-select" id="sidesInput">
+                            <option value="3" selected>3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                        </select>
+                    </div>
+                    <span style="padding: 0;">&nbsp;lados</span>
+                </div>
+                <div class="row row-cols-sm-auto g-3 align-items-center justify-content-center"
+                    style="margin-top: 0px;">
+                    <button type="button" class="btn btn-danger" id="cleanButton">Apagar linhas</button>
+                </div>
+            </form>
+            <!-- </div> -->
             <!-- Descrição do trab -->
             <h2>Objetivo</h2>
             <p>Alterar formato e posição de retas e de polígonos criados no canvas de html5. </p>
@@ -119,49 +119,59 @@
 <script type="text/javascript">
     const COR_SELECAO = '#7cc4ac';
     const COR_PADRAO = 'black';
-    // 
-    var acao = 0; // 0 => move ponta[0], 1 => move ponta[1], 2 => move linha toda
-    var coord_inicial, pos_inicial;
-    const linhas_acao = [];
-    const CANVAS = document.getElementById("canvas");
     // configura o padrão das linhas
-    const CTX = CANVAS.getContext("2d");
+    const CANVAS_E = document.getElementById("canvas");
+    const CTX = CANVAS_E.getContext("2d");
     CTX.lineWidth = 4;
     CTX.lineCap = "round";
     CTX.strokeStyle = 'black';
+    //
+    const CANVAS = new Canvas(CANVAS_E, CTX);
+    var acao = 0; // 0 => move ponta[0], 1 => move ponta[1], 2 => move linha toda
+    var coord_inicial, pos_inicial;
+    const linhas_acao = [];
 
     // cria uma linha
-    criaLinha({ x: 100, y: 100 }, { x: 100, y: 300 });
-    desenha(CANVAS, CTX);
+    CANVAS.criaLinha({ x: 100, y: 100 }, { x: 100, y: 300 });
+    CANVAS.desenha();
 
 
     // ---------------------------- eventos do canvas ----------------------------
 
-    // remover a ação de abrir o menu do navegador no canvas 
-    CANVAS.addEventListener("contextmenu", e => e.preventDefault());
-    // captura o movimento do mouse no canvas 
-    CANVAS.addEventListener("mousemove", function (e) {
-        if (e.buttons > 2) return;
-        // console.log(e);
+    // remover a ação de abrir o menu do navegador no canvas
+    CANVAS_E.addEventListener("contextmenu", e => e.preventDefault());
+    // captura o movimento do mouse no canvas
+    CANVAS_E.addEventListener("mousemove", function (e) {
+        if (e.buttons > 2) return; // ação não interessa
+        // não possui botão pressionado, então só faz higlight da linha
+        // em baixo do cursor
         if (e.buttons == 0) {
-            atualizaCores(COR_PADRAO);
-            var linha = obtemLinha(e, CTX);
-            if (linha != null)
+            CANVAS.atualizaCores(COR_PADRAO);
+            var linha = CANVAS.obtemLinha(e);
+            if (linha != null) {
+                CANVAS_E.style.cursor = "grab";
                 linha.cor = COR_SELECAO;
+            } else {
+                CANVAS_E.style.cursor = "pointer";
+            }
+            CANVAS.desenha();
+            return;
         }
 
         const coord = { x: e.offsetX, y: e.offsetY };
-
+        // move a primeira ponta da linha para a posição do mouse
         if (acao == 0) {
             for (const linha of linhas_acao) {
                 linha.atualizaCoords(coord, linha.coords[1]);
             }
         }
+        // move a segunda ponta da linha para a posição do mouse
         if (acao == 1) {
             for (const linha of linhas_acao) {
                 linha.atualizaCoords(linha.coords[0], coord);
             }
         }
+        // move toda a linha para uma posição relativa à sua inicial
         if (acao == 2) {
             for (const linha of linhas_acao) {
                 let coord1 = {
@@ -176,31 +186,34 @@
             }
         }
 
-        desenha(CANVAS, CTX);
+        CANVAS.desenha();
     });
 
+    // captura a ação de clique
+    CANVAS_E.addEventListener("mousedown", function (e) {
+        if (e.buttons > 2) return; // ação não interessa
 
-    CANVAS.addEventListener("mousedown", function (e) {
-        if (e.buttons > 2) return;
-
-        const coord = { x: e.offsetX, y: e.offsetY };
-        var linha = obtemLinha(e, CTX);
+        var linha = CANVAS.obtemLinha(e);
         linhas_acao.length = 0;
         if (!linha) return;
 
+        const coord = { x: e.offsetX, y: e.offsetY };
         linha.cor = COR_SELECAO;
-
+        // clique esquerdo
         if (e.buttons == 1) {
-            CANVAS.style.cursor = "grabbing";
+            CANVAS_E.style.cursor = "grabbing";
+            // seleciona a linha a ser movida e qual tipo de acao
             acao = linha.canto(coord);
-            if (acao == 2){
+            if (acao == 2) {
                 coord_inicial = coord;
                 pos_inicial = linha.coords;
             }
             linhas_acao.push(linha);
         } else {
-            CANVAS.style.cursor = "move";
-            nova_linha = divideLinha(coord, linha);
+            CANVAS_E.style.cursor = "move";
+            // divide a linha em 2 e "seleciona" ambas para a açõo
+            // de mové-las (até se soltar o clique)
+            nova_linha = CANVAS.divideLinha(coord, linha);
             nova_linha.cor = COR_SELECAO;
             acao = 0;
             linhas_acao.push(linha);
@@ -208,12 +221,14 @@
         }
     });
 
-    CANVAS.addEventListener("mouseup", function (e) {
-        CANVAS.style.cursor = "pointer";
+    // captura a ação de "soltar" do mouse
+    CANVAS_E.addEventListener("mouseup", function (e) {
+        // redefine tudo para o "padrão"
+        CANVAS_E.style.cursor = "pointer";
         linhas_acao.length = 0;
         acao = -1;
-        atualizaCores(COR_PADRAO);
-        desenha(CANVAS, CTX);
+        CANVAS.atualizaCores(COR_PADRAO);
+        CANVAS.desenha();
     });
 
 
@@ -222,13 +237,13 @@
     const botaoCriar = document.getElementById("botaoCriar");
     botaoCriar.addEventListener("click", function () {
         const sides = parseInt(document.getElementById("sidesInput").selectedOptions[0].value);
-        criarPoligono(CANVAS, CTX, sides);
+        CANVAS.criarPoligono(sides);
     });
 
     // apagar polígonos
     const cleanButton = document.getElementById("cleanButton");
     cleanButton.addEventListener("click", function () {
-        apagaLinhas(CANVAS, CTX);
+        CANVAS.limpa();
     });
 
 </script>
