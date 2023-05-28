@@ -10,58 +10,6 @@
 }
 
 
-/* ------------------- tabela ------------------------ */
-table {
-    width: 100%; 
-    max-width: 600px; 
-    margin: auto;
-}
-
-table th {
-    width: calc(100%/7);
-    text-align: center;
-    background-color: var(--bs-primary) !important;
-    color: white;
-    border-color: white;
-}
-
-tr th:last-child {
-    border-right: 0px;
-}
-
-thead tr{
-    border-bottom: 1px solid white;
-}
-
-
-tbody {
-    text-align: center;
-    font-size: 1rem;
-}
-
-td {
-    color: var(--bs-primary);
-}
-
-tbody th {
-    border-top: 1px solid white !important;
-}
-
-#CI1010 {
-    background-color: var(--bs-secondary) !important;
-    color: white;
-}
-
-#ST835A {
-    background-color: var(--bs-info) !important;
-    color: white;
-}
-
-#CI1221 {
-    background-color: var(--bs-warning) !important;
-    color: white;
-}
-
 /* ------------------------------ menu lateral ------------------------------------- */
 /* por algum motivo o fundo escuro NÃO usa a cor escura de fundo por padrão */
 .bg-dark {
