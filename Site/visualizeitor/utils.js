@@ -9,7 +9,7 @@ const MATERIAS_BCC = [
 
 
 
-function leArquivo(arquivo, alunos) {
+function leArquivo(arquivo, input, alunos) {
     var reader = new FileReader();
     reader.readAsText(arquivo);
 
@@ -31,6 +31,7 @@ function leArquivo(arquivo, alunos) {
                 alunos.insere(obj);
             }
         }
+        atualizaSeletor(input, alunos);
     };
 }
 
@@ -50,6 +51,18 @@ function desenhaGrade(obrigatorias, outras, materias = null) {
     obrigatorias.html(html);
 }
 
-function atualizaSeletor(seletor, alunos){
+function atualizaSeletor(seletor, alunos) {
+    var opcoes = "";
+    const listaGRR = alunos.getGRRs();
 
+    for (const grr of listaGRR) {
+        opcoes += `<option value="${grr}"> ${grr} </option>`;
+    }
+    // não foi criado o novo html...
+    if (opcoes == "") {
+        opcoes += '<option value=""> Carregue um arquivo </option>';
+    } else {
+        opcoes = '<option value="">  </option>' + opcoes;
+    }
+    seletor.html(opcoes);
 }

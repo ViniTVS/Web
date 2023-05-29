@@ -57,7 +57,7 @@
       <form id="upload-arquivo" method=POST enctype="multipart/form-data">
         <label for="arquivo">Selecionar arquivo de alunos </label>
         <input id="arquivo" name="arquivo" type="file" accept=".xml" />
-        <input type="submit" class="btn btn-primary" value="Atualizar" />
+        <input type="submit" class="btn btn-primary" value="Carregar" />
       </form>
 
       <!-- Seletor -->
@@ -67,12 +67,6 @@
         </span>
         <div class="col" style="padding: 0;">
           <select class="form-select" id="sidesInput">
-            <option value="3" selected>3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
           </select>
         </div>
       </div>
@@ -92,15 +86,6 @@
           </tr>
         </thead>
         <tbody id="obrigatorias">
-          <tr>
-            <td> CI068 </td>
-          </tr>
-          <tr>
-          </tr>
-          <tr>
-          </tr>
-          <tr>
-          </tr>
         </tbody>
       </table>
 
@@ -108,15 +93,6 @@
       <h2>Outras Disciplinas</h2>
       <table class="d-none d-sm-block table table-bordered border-primary">
         <tbody id="outras">
-          <tr>
-            <td> CI068 </td>
-          </tr>
-          <tr>
-          </tr>
-          <tr>
-          </tr>
-          <tr>
-          </tr>
         </tbody>
       </table>
 
@@ -174,7 +150,14 @@
   const OBRIGATORIAS = $("#obrigatorias");
   const OUTRAS = $("#outras");
 
+  const INPUT = $("#sidesInput");
+  console.log(INPUT)
+
+
   desenhaGrade(OBRIGATORIAS, OUTRAS);
+
+  // document.getElementById("arquivo").value = "";
+  atualizaSeletor(INPUT, ALUNOS);
 
   // https://stackoverflow.com/questions/20853219/how-to-read-xml-file-using-filereader-javascript
   $("#upload-arquivo").submit(function (e) {
@@ -182,10 +165,14 @@
     var file = document.getElementById("arquivo").files[0];
     if (!file) return;
 
-    leArquivo(file, ALUNOS);
+    leArquivo(file, INPUT, ALUNOS);
+
+
   });
 
 
-
+  INPUT.change(function (e) {
+    console.log(e.currentTarget.value);
+  });
 
 </script>
