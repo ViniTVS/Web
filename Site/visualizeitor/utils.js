@@ -7,6 +7,9 @@ const MATERIAS_BCC = [
     ["CM201", "CM202", "CI166", "CI164", "SA214", "CI220", "TG I", "TG II"]
 ];
 
+// const CAMPOS_DEC = ["id_curso_aluno", "id_versao_curso", "creditos", "ch_total", "id_nota"];
+
+var NUM_OPTS = 0;
 
 
 function leArquivo(arquivo, input, alunos) {
@@ -32,30 +35,91 @@ function leArquivo(arquivo, input, alunos) {
             }
         }
         atualizaSeletor(input, alunos);
+        alunos.ordena();
     };
 }
 
 
-function desenhaGrade(obrigatorias, outras, materias = null) {
-    var html = "";
+function classeMateria(situacao) {
+    var str = situacao.toLowerCase();
 
-    for (const l_materias of MATERIAS_BCC) {
-        html += "<tr>";
+    if (str.includes("aprovado")) {
+        return "aprovado";
+    } else if (str.includes("repr")) {
+        return "reprovado";
+    } else if (str.includes("matrícula") || str.includes("matricula")) {
+        return "matriculado";
+    } else if (str.includes("equivale")){
+        return "equivalencia";
+    } 
+    return "";
+}
 
-        for (const materia of l_materias) {
-            html += `<td> ${materia} </td>`;
-        }
 
-        html += "</tr>";
+function geraCelulaObrig(codigo, materias) {
+    var l_materias = null;
+
+    switch (codigo) {
+        case "OPT":
+            const chaves = Object.keys(materias.optativas);
+            if(NUM_OPTS < chaves.length){
+                var cod = chaves.at(NUM_OPTS)
+                l_materias = materias.optativas[cod];
+                NUM_OPTS += 1;
+            }
+            break;
+        case "TG I":
+            l_materias = materias.tg1;
+            break;
+        case "TG II":
+            l_materias = materias.tg2;
+            break;
+        default:
+            l_materias = materias.obrigatorias[codigo];
     }
-    obrigatorias.html(html);
+    
+    if (l_materias != null && l_materias.length > 0) {
+        let classe = classeMateria(l_materias.at(-1).sigla);
+        
+        return `<td class="${classe}" > ${codigo} </td>`;
+    }
+    return `<td> ${codigo} </td>`;
+    
+
+}
+
+
+
+function desenhaGrade(obrigatorias, outras, materias = null) {
+    var celulas = "";
+    NUM_OPTS = 0;
+    // 
+    if (materias == null || materias == undefined) {
+        for (let l_materias of MATERIAS_BCC) {
+            celulas += "<tr>";
+            for (let materia of l_materias) {
+                celulas += `<td> ${materia} </td>`;
+            }
+            celulas += "</tr>";
+        }
+    }
+    else {
+        for (let l_materias of MATERIAS_BCC) {
+            celulas += "<tr>";
+            for (let materia of l_materias) {
+                celulas += geraCelulaObrig(materia, materias);
+            }
+            celulas += "</tr>";
+        }
+    }
+    obrigatorias.html(celulas);
 }
 
 function atualizaSeletor(seletor, alunos) {
     var opcoes = "";
     const listaGRR = alunos.getGRRs();
 
-    for (const grr of listaGRR) {
+    for (let grr of listaGRR) {
         opcoes += `<option value="${grr}"> ${grr} </option>`;
     }
     // não foi criado o novo html...

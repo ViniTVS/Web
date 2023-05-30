@@ -6,7 +6,7 @@
 
 class Alunos {
     campos_aluno = [
-        "ano",
+        // "ano",
         "cod_curso",
         "conceito",
         "id_curso_aluno",
@@ -19,7 +19,7 @@ class Alunos {
     ];
 
     constructor() {
-        this.usuarios = {};
+        this.alunos = {};
     }
     // ano: "2011"
     // ch_total: ""
@@ -55,7 +55,7 @@ class Alunos {
         var aluno = {};
 
         // cria a entrada da materia com os campos que não pertencem ao aluno
-        for (const key of Object.keys(dados)) {
+        for (let key of Object.keys(dados)) {
             if (!(this.campos_aluno.includes(key))) {
                 materia[key] = dados[key];
             }
@@ -63,32 +63,43 @@ class Alunos {
 
 
         // cria entrada do aluno se não existe
-        if (!(matr_aluno in this.usuarios)) {
-            for (const campo of this.campos_aluno) {
+        if (!(matr_aluno in this.alunos)) {
+            for (let campo of this.campos_aluno) {
                 aluno[campo] = dados[campo];
             }
-            aluno["materias"] = new Materias(); 
+            aluno["materias"] = new Materias();
             // e o inclui nos alunos cadastrados
-            this.usuarios[matr_aluno] = aluno;
+            this.alunos[matr_aluno] = aluno;
         }
 
         // adiciona a matéria do aluno
-        this.usuarios[matr_aluno]["materias"].insere(materia);
+        this.alunos[matr_aluno]["materias"].insere(materia);
     }
 
     imprime() {
-        for (const key of Object.keys(this.usuarios)) {
-            console.log(this.usuarios[key]);
-            this.usuarios[key]["materias"].imprime();
+        for (let key of Object.keys(this.alunos)) {
+            console.log(this.alunos[key]);
+            this.alunos[key]["materias"].imprime();
         }
 
     }
     limpa() {
-        this.usuarios = {};
+        this.alunos = {};
     }
 
-    getGRRs(){
-        return Object.keys(this.usuarios);
+    getGRRs() {
+        return Object.keys(this.alunos);
     }
 
+    ordena() {
+        const listaGRR = this.getGRRs();
+
+        for (let grr of listaGRR) {
+            this.alunos[grr]["materias"].ordena();
+        }
+    }
+
+    getAluno(GRR){
+        return this.alunos[GRR];
+    }
 }

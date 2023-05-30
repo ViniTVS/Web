@@ -50,6 +50,9 @@
         </footer>
       </div>
     </aside>
+
+
+    
     <!-- Conteúdo principal (direita) -->
     <section class="col" style="max-height: 100vh; overflow: auto; margin: auto; width: 100%;">
       <h1>Visualizeitor</h1>
@@ -58,18 +61,18 @@
         <label for="arquivo">Selecionar arquivo de alunos </label>
         <input id="arquivo" name="arquivo" type="file" accept=".xml" />
         <input type="submit" class="btn btn-primary" value="Carregar" />
+        <!-- Seletor -->
+        <div class="row row-cols-sm-auto g-3 align-items-center justify-content-start">
+          <span >
+            Selecionar aluno
+          </span>
+          <div class="col">
+            <select class="form-select" id="sidesInput">
+            </select>
+          </div>
+        </div>
       </form>
 
-      <!-- Seletor -->
-      <div class="row row-cols-sm-auto g-3 align-items-center justify-content-start">
-        <span style="padding: 0;">
-          Selecionar aluno&nbsp;
-        </span>
-        <div class="col" style="padding: 0;">
-          <select class="form-select" id="sidesInput">
-          </select>
-        </div>
-      </div>
 
       <h2>Obrigatórias</h2>
       <table class="d-none d-sm-block table table-bordered border-primary" style="margin: auto;">
@@ -115,50 +118,40 @@
     text-align: center;
     background-color: var(--bs-primary) !important;
     color: white;
+    min-width: 70px;
   }
 
 
   .aprovado {
     color: white;
     background-color: green !important;
-
   }
 
   .reprovado {
     color: white;
     background-color: red !important;
-
   }
 
   .matriculado {
     color: white;
     background-color: blue !important;
-
   }
 
   .equivalencia {
     color: white;
     background-color: green !important;
-
   }
 </style>
 
 <script type="text/javascript">
 
   const ALUNOS = new Alunos();
-
   const OBRIGATORIAS = $("#obrigatorias");
   const OUTRAS = $("#outras");
-
   const INPUT = $("#sidesInput");
-  console.log(INPUT)
-
 
   desenhaGrade(OBRIGATORIAS, OUTRAS);
-
-  // document.getElementById("arquivo").value = "";
   atualizaSeletor(INPUT, ALUNOS);
-
   // https://stackoverflow.com/questions/20853219/how-to-read-xml-file-using-filereader-javascript
   $("#upload-arquivo").submit(function (e) {
     e.preventDefault();
@@ -166,13 +159,17 @@
     if (!file) return;
 
     leArquivo(file, INPUT, ALUNOS);
-
-
   });
 
 
   INPUT.change(function (e) {
-    console.log(e.currentTarget.value);
+    const grr = e.currentTarget.value;
+    if (grr == "")
+      return;
+    
+    let aluno = ALUNOS.getAluno(grr);    
+    let materias = aluno["materias"];
+    desenhaGrade(OBRIGATORIAS, OUTRAS, materias);
   });
 
 </script>
