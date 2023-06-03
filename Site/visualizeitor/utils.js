@@ -7,10 +7,7 @@ const MATERIAS_BCC = [
     ["CM201", "CM202", "CI166", "CI164", "SA214", "CI220", "TG I", "TG II"]
 ];
 
-// const CAMPOS_DEC = ["id_curso_aluno", "id_versao_curso", "creditos", "ch_total", "id_nota"];
-
 var NUM_OPTS = 0;
-
 
 function leArquivo(arquivo, input, alunos) {
     var reader = new FileReader();
@@ -49,70 +46,110 @@ function classeMateria(situacao) {
         return "reprovado";
     } else if (str.includes("matrícula") || str.includes("matricula")) {
         return "matriculado";
-    } else if (str.includes("equivale")){
+    } else if (str.includes("equivale")) {
         return "equivalencia";
-    } 
+    } else if (str.includes("tr. total")) {
+        return "trancamento";
+    }
     return "";
 }
 
 
 function geraCelulaObrig(codigo, materias) {
     var l_materias = null;
+    var classe = "";
 
     switch (codigo) {
         case "OPT":
             const chaves = Object.keys(materias.optativas);
-            if(NUM_OPTS < chaves.length){
+            if (NUM_OPTS < chaves.length) {
                 var cod = chaves.at(NUM_OPTS)
                 l_materias = materias.optativas[cod];
                 NUM_OPTS += 1;
+                classe = "optativas ";
             }
             break;
         case "TG I":
             l_materias = materias.tg1;
+            classe = "tg1 ";
             break;
         case "TG II":
             l_materias = materias.tg2;
+            classe = "tg2 ";
             break;
         default:
             l_materias = materias.obrigatorias[codigo];
+            classe = "obrigatorias ";
     }
-    
+
     if (l_materias != null && l_materias.length > 0) {
-        let classe = classeMateria(l_materias.at(-1).sigla);
-        
-        return `<td class="${classe}" > ${codigo} </td>`;
+        classe += classeMateria(l_materias.at(-1).sigla);
+        let id = classe == "" ? "" : l_materias.at(-1).cod_ativ_curric;
+        return `<td class="${classe} celula" id="${id}"> ${codigo} </td>`;
     }
     return `<td> ${codigo} </td>`;
-    
+}
 
+function geraCelulaOutras(outras_materias) {
+    if (outras_materias == undefined)
+        return "";
+    const chaves = Object.keys(outras_materias);
+    var num_chaves = chaves.length;
+
+    var codigo = "";
+    var l_materias = null;
+
+    let num_linhas = Math.ceil(num_chaves / 8);
+    // matemática maluca pra fazer a tabela de outras 
+    // com 8 matérias por linha
+    for (let i = 0; i < num_linhas; i++) {
+        codigo += "<tr>";
+        var j = 0;
+        for (; i * 8 + j < num_chaves && j < 8; j++) {
+            let cod_mat = chaves[i * 8 + j];
+            l_materias = outras_materias[cod_mat];
+            let classe = classeMateria(l_materias.at(-1).sigla);
+            let id = l_materias.at(-1).cod_ativ_curric;
+            codigo += `<td class="outras ${classe} celula" id="${id}"> ${id} </td>`;
+        }
+        // colspan se sobrarem colunas e deixar minimamente mais bonito
+        if (j < 8 && i > 0) {
+            let spam = 8 - j;
+            codigo += `<td colspan="${spam}">  </td>`;
+        }
+        codigo += "</tr>";
+    }
+    return codigo;
 }
 
 
 
 function desenhaGrade(obrigatorias, outras, materias = null) {
-    var celulas = "";
+    var celulas_obg = "";
+    var celulas_outras = "";
     NUM_OPTS = 0;
-    // 
+    // construir a grade curricular colorida só se tiver matérias2
     if (materias == null || materias == undefined) {
         for (let l_materias of MATERIAS_BCC) {
-            celulas += "<tr>";
+            celulas_obg += "<tr>";
             for (let materia of l_materias) {
-                celulas += `<td> ${materia} </td>`;
+                celulas_obg += `<td> ${materia} </td>`;
             }
-            celulas += "</tr>";
+            celulas_obg += "</tr>";
         }
     }
     else {
         for (let l_materias of MATERIAS_BCC) {
-            celulas += "<tr>";
+            celulas_obg += "<tr>";
             for (let materia of l_materias) {
-                celulas += geraCelulaObrig(materia, materias);
+                celulas_obg += geraCelulaObrig(materia, materias);
             }
-            celulas += "</tr>";
+            celulas_obg += "</tr>";
         }
+        celulas_outras = geraCelulaOutras(materias.outras);
     }
-    obrigatorias.html(celulas);
+    obrigatorias.html(celulas_obg);
+    outras.html(celulas_outras);
 }
 
 function atualizaSeletor(seletor, alunos) {
@@ -129,4 +166,64 @@ function atualizaSeletor(seletor, alunos) {
         opcoes = '<option value="">  </option>' + opcoes;
     }
     seletor.html(opcoes);
+}
+
+function geraModal(titulo, materias, classe, id, ultima) {
+    var codigo = "";
+    var vet_mat = materias[classe];
+    if (!Array.isArray(vet_mat))
+        vet_mat = vet_mat[id];
+
+    if (ultima) {
+        const info_mat = vet_mat.at(-1);
+        titulo.html(info_mat.nome_ativ_curric);
+        var freq = parseFloat(info_mat.frequencia.replace(',', '.')).toFixed(2).replace('.', ',');
+        codigo = `
+            <span class="fw-bold"> Código: </span> ${info_mat.cod_ativ_curric} <br>
+            <span class="fw-bold"> Última vez cursada: </span> ${info_mat.ano}/${info_mat.periodo} <br>
+            <span class="fw-bold"> Nota: </span> ${info_mat.media_final} <br>
+            <span class="fw-bold"> Frequência: </span> ${freq}% <br>
+            <span class="fw-bold"> Situação: </span> ${info_mat.situacao} <br>
+        `;
+
+    } else {
+        codigo += `
+            <span class="fw-bold"> Código: </span> ${vet_mat[0].cod_ativ_curric} <br>
+            <div class="accordion" id="acordeao" style="margin-top: 10px;">
+        `;
+        var i = 0;
+        for (const info_mat of vet_mat) {
+            let heading = "heading" + i.toString();
+            let collapse = "collapse" + i.toString();
+            titulo.html(info_mat.nome_ativ_curric);
+            var freq = parseFloat(info_mat.frequencia.replace(',', '.')).toFixed(2).replace('.', ',');
+            codigo += `
+                <div class="accordion-item">
+                <h2 class="accordion-header" id="${heading}">
+                    <button 
+                        class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#${collapse}"
+                        aria-controls="${collapse}"
+                    >
+                    ${info_mat.ano}/${info_mat.periodo}
+                    </button>
+                </h2>
+                <div id="${collapse}" class="accordion-collapse collapse" aria-labelledby="${heading}"
+                    data-bs-parent="#acordeao">
+                    <div class="accordion-body">
+                        <span class="fw-bold"> Nota: </span> ${info_mat.media_final} <br>
+                        <span class="fw-bold"> Frequência: </span> ${freq}% <br>
+                        <span class="fw-bold"> Situação: </span> ${info_mat.situacao} <br>
+                    </div>
+                </div>
+                </div>
+            `;
+            i++;
+        }
+        codigo += "</div>";
+    }
+
+
+
+
+    return codigo;
 }
