@@ -68,20 +68,14 @@
         <input id="arquivo" name="arquivo" type="file" accept=".xml" />
         <input type="submit" class="btn btn-primary" value="Carregar" />
         <!-- Seletor -->
-        <div class="row row-cols-sm-auto g-3 align-items-center justify-content-start">
-          <span>
-            Selecionar aluno
-          </span>
-          <div class="col">
-            <select class="form-select" id="sidesInput">
-            </select>
-          </div>
-        </div>
       </form>
-
+      <label>Selecionar aluno:
+        <input disabled list="alunosList" name="myBrowser" id="alunosInput"/></label>
+      <datalist id="alunosList">
+      </datalist>
 
       <h2>Obrigatórias</h2>
-      <table class="d-none d-sm-block table table-bordered border-primary" style="margin: auto;">
+      <table class="d-none d-sm-block table table-bordered border-primary">
         <thead>
           <tr>
             <th>1º</th>
@@ -105,6 +99,57 @@
         </tbody>
       </table>
 
+      <p>
+      <h2>Objetivo</h2>
+      Criar um aplicativo em html/javascript/jquery, que permita a visualização da grade curricular de alunos de
+      qualquer curso. A "prova de conceito" será feita como no curso do BCC.
+      <h2>Características</h2>
+      <ul>
+        <li>Deve conter um desenho da grade curricular do curso (em linhas e colunas).</li>
+        <li>Cada disciplina deve estar pintada com uma cor indicando a situação da última matrícula do aluno (aprovado
+          em verde, reprovado em vermelho, matriculado em azul, equivalência em amarelo e não cursado em branco).
+        </li>
+        <li>
+          As ações do usuário em cada "caixinha" de uma disciplina, são:
+          <ul>
+            <li>
+              Ao clicar com o botão esquerdo, aparece uma janela popup com os campos "Código/nome da disciplina",
+              "última vez cursada" (ano/semestre), "nota" e "frequência". Os dados são da última vez que cursou a
+              disciplina
+            </li>
+            <li>
+              Quando o usuário clicar no botão direito, deve aparecer todo o histórico do aluno *naquela disciplina* (ou
+              seja, todas as vezes que cursou, com nota, frequência e ano/semestre).
+            </li>
+          </ul>
+        </li>
+        <li>
+          Na parte superior, deverá haver um campo para que o usuário possa digitar o RA do aluno cujo histórico queira
+          ver.
+        </li>
+        <li>
+          Para este trabalho, serão usados os arquivos:
+          <ul>
+            <li>
+              <a href="./alunos.xml" target="_blank" download="alunos">alunos.xml</a>
+              que contém os dados fictícios de 12 alunos do curso.
+            </li>
+            <li>
+              <a href="./alunos.xsd" target="_blank" download>alunos.xsd</a>
+            </li>
+            <li>
+              Grade curricular de 1998 ou 2011
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <h2>Decisões de design</h2>
+      Como a grade curricular de 1998 não está disponível no site do curso, será utilizada somente a
+      <a href="https://web.inf.ufpr.br/bcc/curriculo/grade-curricular-2011/" target="_blank" rel="noreferrer">grade
+        curricular de 2011</a>.
+      Quaisquer disciplinas que não estiverem lá presentes serão adicionadas em "Outras Disciplinas".
+      </p>
+
       <!-- Modal -->
       <div class="modal fade" id="modalMateria" tabindex="-1" aria-labelledby="modalMateriaLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -120,10 +165,10 @@
         </div>
       </div>
 
-
     </section>
   </main>
 </body>
+
 </html>
 
 <style>
@@ -141,6 +186,10 @@
     color: white;
   }
 
+  table{
+    margin: auto; 
+    margin-bottom: 20px;
+  }
 
   .aprovado {
     color: white;
@@ -177,50 +226,57 @@
   const ALUNOS = new Alunos();
   const OBRIGATORIAS = $("#obrigatorias");
   const OUTRAS = $("#outras");
-  const INPUT = $("#sidesInput");
+  const LISTA_ALUNOS = $("#alunosList");
   var MATERIAS = {};
+  var INPUT_ALUNOS = $("#alunosInput");
 
-  // $("#modalMateria")[0].addEventListener("mousedown", e => e.preventDefault());
-
+  INPUT_ALUNOS[0].disabled = true;
+  INPUT_ALUNOS[0].value="Carregue um arquivo";
 
   desenhaGrade(OBRIGATORIAS, OUTRAS);
-  atualizaSeletor(INPUT, ALUNOS);
-  // https://stackoverflow.com/questions/20853219/how-to-read-xml-file-using-filereader-javascript
+  atualizaSeletor(LISTA_ALUNOS, ALUNOS);
+
+  // lê arquivo
   $("#upload-arquivo").submit(function (e) {
     e.preventDefault();
     var file = document.getElementById("arquivo").files[0];
     if (!file) return;
-
-    leArquivo(file, INPUT, ALUNOS);
+    leArquivo(file, LISTA_ALUNOS, ALUNOS);
+    INPUT_ALUNOS[0].disabled = false;
+    INPUT_ALUNOS[0].value = "";
   });
 
 
-  INPUT.change(function (e) {
+  // Atualiza a grade de matérias quando selecionado um GRR
+  INPUT_ALUNOS.on('input',function (e) {
     const grr = e.currentTarget.value;
     if (grr == "")
       return;
 
-    MATERIAS = ALUNOS.getAluno(grr)["materias"];
+    let aluno = ALUNOS.getAluno(grr)
+    if(aluno){
+      MATERIAS = aluno["materias"];
+    } else {
+      MATERIAS = null;
+    }
     desenhaGrade(OBRIGATORIAS, OUTRAS, MATERIAS);
     adicionaMouseEvent();
   });
-
+  // Adiciona evento do mouse para cada célula da tabela de disciplina cursada
   function adicionaMouseEvent() {
     const celulas = document.getElementsByClassName("celula");
 
     for (const cel of celulas) {
-      cel.addEventListener("contextmenu", e => e.preventDefault());
       cel.addEventListener("mousedown", function (e) {
-        
         let classe = e.originalTarget.classList[0];
         let id = e.originalTarget.id;
         let modal = $("#modal-body");
         let titulo = $("#modal-title");
-        
+
         if (e.buttons == 1) {
-          modal.html(geraModal(titulo, MATERIAS, classe, id, true));
+          geraModal(modal, titulo, MATERIAS, classe, id, true);
         } else if (e.buttons == 2) {
-          modal.html(geraModal(titulo, MATERIAS, classe, id, false));
+          geraModal(modal, titulo, MATERIAS, classe, id, false);
         }
 
         $("#modalMateria").modal('toggle');

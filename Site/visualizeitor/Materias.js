@@ -6,9 +6,9 @@ const MATERIAS_TG1 = ["CI070", "CI072", "CI074", "CI076", "CI078", "CI080", "CI0
 
 const MATERIAS_TG2 = ["CI071", "CI073", "CI075", "CI077", "CI079", "CI081", "CI083", "CI099", "CI251", "CI253", "CI255", "CI257", "CI259", "CI261"];
 
-
-
+// Classe para armazenar as materias de cada aluno
 class Materias {
+  // Cada aluno terá optativas, eletivas, TCCs e "outras"
   constructor() {
     this.obrigatorias = {};
     this.optativas = {};
@@ -21,7 +21,7 @@ class Materias {
     var materias = {};
 
     const atividade = dados["cod_ativ_curric"];
-    // ve o tipo de matéria
+    // ve o "tipo" de matéria
     if (MATERIAS_OBRIGATORIAS.includes(atividade)) {
       materias = this.obrigatorias;
     } else if (MATERIAS_OPTATIVAS.includes(atividade)) {
@@ -35,15 +35,13 @@ class Materias {
     } else {
       materias = this.outras;
     }
-
-    // insere no tipo necessário
+    // cada matéria terá um vetor, para cada vez que a matéria é feita 
     if (!(atividade in materias)) {
-      materias[atividade] = [];
+      materias[atividade] = []; 
     }
     materias[atividade].push(dados);
   }
-
-
+  // Função para ordenar cada matéria de dada categoria
   ordenaCategoria(categoria) {
     categoria.sort(function (a, b) {
       var diff = parseInt(a.ano) - parseInt(b.ano);
@@ -54,10 +52,9 @@ class Materias {
     })
 
   }
-
+  // Ordena todas as metérias salvas
   ordena() {
     let lista_ordena = [this.obrigatorias, this.optativas, this.outras];
-    
     for (let item of lista_ordena) {
       const cod_materias = Object.keys(item);
       for (let materia of cod_materias) {
@@ -65,7 +62,7 @@ class Materias {
       }
     }
   }
-
+  // Imprime no console.log cada "tipo" de matéria
   imprime() {
     console.log("Obrigatórias:", this.obrigatorias);
     console.log("Optativas:", this.optativas);
