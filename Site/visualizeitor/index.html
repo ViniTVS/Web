@@ -174,10 +174,10 @@
 <style>
   /* ------------------- tabela ------------------------ */
 
-  table td {
+  table tr td {
     color: black;
     text-align: center;
-    min-width: 70px;
+    min-width: 80px !important;
   }
 
   table th {
@@ -189,6 +189,7 @@
   table{
     margin: auto; 
     margin-bottom: 20px;
+	max-width: auto;
   }
 
   .aprovado {
@@ -274,9 +275,9 @@
         let titulo = $("#modal-title");
 
         if (e.buttons == 1) {
-          geraModal(modal, titulo, MATERIAS, classe, id, true);
-        } else if (e.buttons == 2) {
           geraModal(modal, titulo, MATERIAS, classe, id, false);
+        } else if (e.buttons == 2) {
+          geraModal(modal, titulo, MATERIAS, classe, id, true);
         }
 
         $("#modalMateria").modal('toggle');
