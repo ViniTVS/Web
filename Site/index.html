@@ -29,17 +29,17 @@
                     <a class="flex-sm-fill text-sm-center nav-link" href="redes2.html">
                         Trabalho de redes 2
                     </a>
-                    <a class="flex-sm-fill text-sm-center nav-link" href="banco_de_dados.html"> 
+                    <a class="flex-sm-fill text-sm-center nav-link" href="banco_de_dados.html">
                         Banco de Dados usando ActiveRecord
                     </a>
-                    <a class="flex-sm-fill text-sm-center nav-link" href="processador_de_retas/index.html"> 
+                    <a class="flex-sm-fill text-sm-center nav-link" href="processador_de_retas/index.html">
                         Processador de retas e polígonos
                     </a>
                     <a class="flex-sm-fill text-sm-center nav-link" href="visualizeitor/index.html"> Visualizeitor </a>
-                    <a class="flex-sm-fill text-sm-center nav-link disabled"> 
-                        Aplicação Rails 
+                    <a class="flex-sm-fill text-sm-center nav-link disabled">
+                        Aplicação Rails
                     </a>
-                    <a class="flex-sm-fill text-sm-center nav-link" href="contato.html"> 
+                    <a class="flex-sm-fill text-sm-center nav-link" href="contato.html">
                         Contato
                     </a>
                 </nav>
@@ -57,17 +57,21 @@
                 Este é um site desenvolvido para a disciplina de
                 <a href="https://www.inf.ufpr.br/bmuller/#/ci1010" target="_blank" rel="noreferrer">Programação Web</a>.
                 Minha página própria pode ser encontrada por meio
-                <a href="https://site-vinitvs.vercel.app/" target="_blank" rel="noreferrer">deste link</a>.
+                <a href="https://vinitvs.github.io/" rel="noreferrer">deste link</a>.
             </p>
             <h2>Turmas:</h2>
             <ul>
-                <li><a class="link-secondary" href="https://www.inf.ufpr.br/bmuller/#/ci1010" target="_blank"
-                        rel="noreferrer">CI1010</a> - Programação Web</li>
-                <li><a class="link-warning" href="https://moodle.c3sl.ufpr.br/course/view.php?id=606" target="_blank"
-                        rel="noreferrer">CI1221</a> - Engenhria de Software</li>
-                <li><a class="link-info" href="https://ufprvirtual.ufpr.br/enrol/index.php?id=30170" target="_blank"
-                        rel="noreferrer">ST835A</a> - Língua alemã I </li>
-                <li>CI1123 - Trabalho de Conclusão de Curso 1</li>
+                <li>
+                    <!-- <a class="link-secondary" href="" target="_blank" rel="noreferrer"> -->
+                    CI1033 - Computação Quântica
+                    <!-- </a> -->
+                </li>
+                <li>
+                    <!-- <a class="link-warning" href="" target="_blank" rel="noreferrer"> -->
+                    CI1013 - Grandes Ideias da Computação Teórica
+                    <!-- </a>  -->
+                </li>
+                <li>CI1124 - Trabalho de Conclusão de Curso 2</li>
             </ul>
             <table class="d-none d-sm-block table table-bordered border-primary">
                 <thead>
@@ -78,103 +82,91 @@
                         <th scope="col">Qua</th>
                         <th scope="col">Qui</th>
                         <th scope="col">Sex</th>
-                        <th scope="col">Sab</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <th scope="row">13:30</th>
                         <td></td>
-                        <td id="CI1010">CI1010</td>
                         <td></td>
-                        <td id="CI1010">CI1010</td>
+                        <td></td>
                         <td></td>
                         <td></td>
                     </tr>
                     <tr>
                         <th scope="row">15:30</th>
                         <td></td>
-                        <td></td>
-                        <td id="CI1221">CI1221</td>
-                        <td></td>
-                        <td id="CI1221">CI1221</td>
-                        <td></td>
+                        <td id="CI1010">CI1033</td>
+                        <td id="CI1221">CI1013</td>
+                        <td id="CI1010">CI1033</td>
+                        <td id="CI1221">CI1013</td>
                     </tr>
                     <tr>
-                        <th scope="row"> -- </th>
-                        <td colspan="6"> -- </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"> 21:00 </th>
+                        <th scope="row">17:30</th>
                         <td></td>
                         <td></td>
-                        <td id="ST835A"> ST835A </td>
                         <td></td>
                         <td></td>
-                        <td id="ST835A"> ST835A </td>
+                        <td></td>
                     </tr>
                 </tbody>
             </table>
         </section>
     </main>
-
-
 </body>
 
 </html>
 
 <style>
+    /* ------------------- tabela ------------------------ */
+    table {
+        width: 100%;
+        max-width: 600px;
+        margin: auto;
+    }
 
-/* ------------------- tabela ------------------------ */
-table {
-    width: 100%; 
-    max-width: 600px; 
-    margin: auto;
-}
+    table th {
+        width: calc(100%/8);
+        text-align: center;
+        background-color: var(--bs-primary) !important;
+        color: white;
+        border-color: white;
+    }
 
-table th {
-    width: calc(100%/7);
-    text-align: center;
-    background-color: var(--bs-primary) !important;
-    color: white;
-    border-color: white;
-}
+    tr th:last-child {
+        border-right: 0px;
+    }
 
-tr th:last-child {
-    border-right: 0px;
-}
-
-thead tr{
-    border-bottom: 1px solid white;
-}
+    thead tr {
+        border-bottom: 1px solid white;
+    }
 
 
-tbody {
-    text-align: center;
-    font-size: 1rem;
-}
+    tbody {
+        text-align: center;
+        font-size: 1rem;
+    }
 
-td {
-    color: var(--bs-primary);
-}
+    td {
+        color: var(--bs-primary);
+    }
 
-tbody th {
-    border-top: 1px solid white !important;
-}
+    tbody th {
+        border-top: 1px solid white !important;
+    }
 
-#CI1010 {
-    background-color: var(--bs-secondary) !important;
-    color: white;
-}
+    #CI1010 {
+        background-color: var(--bs-secondary) !important;
+        color: white;
+    }
 
-#ST835A {
-    background-color: var(--bs-info) !important;
-    color: white;
-}
+    #ST835A {
+        background-color: var(--bs-info) !important;
+        color: white;
+    }
 
-#CI1221 {
-    background-color: var(--bs-warning) !important;
-    color: white;
-}
-
+    #CI1221 {
+        background-color: var(--bs-warning) !important;
+        color: white;
+    }
 </style>
